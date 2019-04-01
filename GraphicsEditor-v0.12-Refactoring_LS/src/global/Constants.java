@@ -1,7 +1,8 @@
 package global;
 
-import shape.Rectangle;
 import shape.Shape;
+import shape.Rectangle;
+import shape.Polygon;
 
 public class Constants {
 	
@@ -23,7 +24,7 @@ public class Constants {
 	public enum EToolBar {
 		rectangle("네모", new Rectangle()),
 		rectangle2("네모", new Rectangle()),
-		rectangle3("네모", new Rectangle()),
+		polygon("폴리곤", new Polygon()),
 		;
 		private String text;
 		private Shape shape;

@@ -16,11 +16,9 @@ public class DrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private enum EAcitonState {
-		eReady, e2PDrawing, eNPDrawing
-	}; // 상태
+	private enum EActionState {eReady, e2PDrawing, eNPDrawing}; // 상태
 
-	private EAcitonState eAcitonState;
+	private EActionState eActionState;
 	private MouseHandler mouseHandler;
 
 	private Vector<Shape> shapeVector;
@@ -32,7 +30,7 @@ public class DrawingPanel extends JPanel {
 	}
 
 	public DrawingPanel() {
-		this.eAcitonState = EAcitonState.eReady;
+		this.eActionState = EActionState.eReady;
 
 		this.setBackground(Color.WHITE);
 
@@ -89,47 +87,47 @@ public class DrawingPanel extends JPanel {
 		}
 
 		public void mouse2Clicked(MouseEvent e) {
-			if (eAcitonState == EAcitonState.eNPDrawing) {
+			if (eActionState == EActionState.eNPDrawing) {
 				finishDrawing(e.getX(), e.getY());
-				eAcitonState = EAcitonState.eReady;
+				eActionState = EActionState.eReady;
 			}
 		}
 
 		public void mouse1Clicked(MouseEvent e) {
-			if (eAcitonState == EAcitonState.eReady) {
+			if (eActionState == EActionState.eReady) {
 				initDrawing(e.getX(), e.getY());
-				eAcitonState = EAcitonState.eNPDrawing;
-			} else if (eAcitonState == EAcitonState.eNPDrawing) {
+				eActionState = EActionState.eNPDrawing;
+			} else if (eActionState == EActionState.eNPDrawing) {
 				continueDrawing(e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (eAcitonState == EAcitonState.eNPDrawing) {
+			if (eActionState == EActionState.eNPDrawing) {
 				keepDrawing(e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (eAcitonState == EAcitonState.eReady) {
+			if (eActionState == EActionState.eReady) {
 				initDrawing(e.getX(), e.getY());
-				eAcitonState = EAcitonState.e2PDrawing;
+				eActionState = EActionState.e2PDrawing;
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (eAcitonState == EAcitonState.e2PDrawing) {
+			if (eActionState == EActionState.e2PDrawing) {
 				finishDrawing(e.getX(), e.getY());
-				eAcitonState = EAcitonState.eReady;
+				eActionState = EActionState.eReady;
 			}
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (eAcitonState == EAcitonState.e2PDrawing) {
+			if (eActionState == EActionState.e2PDrawing) {
 				keepDrawing(e.getX(), e.getY());
 			}
 		}

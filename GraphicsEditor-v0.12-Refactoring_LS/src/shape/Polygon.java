@@ -13,11 +13,11 @@ public class Polygon extends Shape {
 		this.yPoints = new int[nMaxPoints];	
 	}
 	public void setOrigin(int x, int y) {
-		this.xPoints[this.nPoints] = x;
+		this.xPoints[this.nPoints] = x; //0번째 점
 		this.yPoints[this.nPoints] = y;
 		this.nPoints = this.nPoints + 1;
 		
-		this.xPoints[this.nPoints] = x;
+		this.xPoints[this.nPoints] = x; //1번째 점
 		this.yPoints[this.nPoints] = y;
 		this.nPoints = this.nPoints + 1;
 	}

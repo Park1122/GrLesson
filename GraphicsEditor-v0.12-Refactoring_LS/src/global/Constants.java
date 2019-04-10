@@ -1,8 +1,8 @@
 package global;
 
-import shape.Shape;
-import shape.Rectangle;
-import shape.Polygon;
+import shape.GShape;
+import shape.GRectangle;
+import shape.GPolygon;
 
 public class Constants {
 	
@@ -22,20 +22,20 @@ public class Constants {
 		}
 	}
 	public enum EToolBar {
-		rectangle("네모", new Rectangle()),
-		rectangle2("네모", new Rectangle()),
-		polygon("폴리곤", new Polygon()),
+		rectangle("네모", new GRectangle()),
+		rectangle2("네모", new GRectangle()),
+		polygon("폴리곤", new GPolygon()),
 		;
 		private String text;
-		private Shape shape;
-		private EToolBar(String text, Shape shape) {
+		private GShape shape;
+		private EToolBar(String text, GShape shape) {
 			this.text = text;
 			this.shape = shape;
 		}
 		public String getText() {
 			return this.text;
 		}
-		public Shape getShape() {
+		public GShape getShape() {
 			return this.shape;
 		}
 	}
@@ -63,5 +63,5 @@ public class Constants {
 		public String getText() {
 			return this.text;
 		}
-	}	
+	}
 }

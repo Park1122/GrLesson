@@ -2,6 +2,7 @@ package drawingPanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,52 +11,78 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import global.Constants.EToolBar;
-import shape.Shape;
+import shape.GShape;
+import shape.GShape.EOnState;
+import shape.GPolygon;
 
-public class DrawingPanel extends JPanel {
+public class GDrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private enum EActionState {eReady, e2PDrawing, eNPDrawing}; // 상태
-
+	private enum EActionState {eReady, e2PDrawing, eNPDrawing, eMoving, eResizing, eRotating};
 	private EActionState eActionState;
 	private MouseHandler mouseHandler;
 
-	private Vector<Shape> shapeVector;
-	private Shape currentShape;
-	private Shape currentTool;
-
+	private Vector<GShape> shapeVector;
+	private GShape currentShape;
+	
+	private GShape currentTool;
 	public void setCurrentTool(EToolBar currentTool) {
 		this.currentTool = currentTool.getShape();
 	}
 
-	public DrawingPanel() {
+	public GDrawingPanel() {
 		this.eActionState = EActionState.eReady;
 
+		this.setForeground(Color.BLACK);
 		this.setBackground(Color.WHITE);
 
 		this.mouseHandler = new MouseHandler();
 		this.addMouseListener(this.mouseHandler);
 		this.addMouseMotionListener(this.mouseHandler);
 
-		this.shapeVector = new Vector<Shape>();
-		this.currentTool = EToolBar.rectangle.getShape();
+		this.shapeVector = new Vector<GShape>();
 	}
-
+	public void initialize() {
+	}
+	
 	public void paint(Graphics graphics) {
-		super.paint(graphics);
+		Graphics2D graphics2d = (Graphics2D)graphics;
+		super.paint(graphics2d);
 
-		for (Shape shape : this.shapeVector) {
-			shape.draw(graphics);
+		for (GShape shape : this.shapeVector) {
+			shape.draw(graphics2d);
 		}
 	}
 
 	private void drawShape() {
-		Graphics graphics = this.getGraphics();
-		graphics.setXORMode(getBackground());
-		this.currentShape.draw(graphics);
+		Graphics2D graphics2d = (Graphics2D) this.getGraphics();
+		graphics2d.setXORMode(getBackground());
+		this.currentShape.draw(graphics2d);
 	}
 
+	private EOnState onShape(int x, int y) { //밑에 누가 있냐 없냐를 판단, 리사이즈인지 무빙인지도 판단
+		this.currentShape = null;
+		for(GShape shape: this.shapeVector) {
+			EOnState eOnState = shape.onShape(x, y);
+			if(eOnState != null) {
+				this.currentShape = shape;
+				return eOnState;
+			}
+		}
+		return null;
+	}
+	
+	private EActionState deActionState(int x, int y) {
+		EOnState eOnState = onShape(x, y);
+		//아무 셰잎에도 없다 null
+		//currentshape에 있는데
+		//온셰잎이면 무브
+		//리사이즈면 리사이즈
+		//로테이트면 로테이트
+		//null이면 드로잉 - npd인지 2pd인지 구분
+	}
+	
 	private void initDrawing(int x, int y) {
 		this.currentShape = this.currentTool.clone();
 		this.currentShape.setOrigin(x, y);
@@ -74,6 +101,20 @@ public class DrawingPanel extends JPanel {
 
 	private void finishDrawing(int x, int y) { // 더블클릭하면 끝. 그러나 폴리곤은 마지막점이 원점 연결.
 		this.shapeVector.add(this.currentShape);
+	}
+	
+	private void initMoving(int x, int y) {
+		this.currentShape.initMoving(x, y);
+	}
+
+	private void keepMoving(int x, int y) {
+		this.drawShape();
+		this.currentShape.keepMoving(x, y);
+		this.drawShape();
+	}
+
+	private void finishMoving(int x, int y) {
+		this.currentShape.finishMoving(x, y);
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener {
@@ -112,8 +153,16 @@ public class DrawingPanel extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (eActionState == EActionState.eReady) {
-				initDrawing(e.getX(), e.getY());
-				eActionState = EActionState.e2PDrawing;
+				eActionState = defineActionState();
+				if (onShape(e.getX(), e.getY())) {
+					initMoving(e.getX(), e.getY());
+					eActionState = EActionState.eMoving;
+				} else {
+					if(!(currentTool instanceof GPolygon)) {
+						initDrawing(e.getX(), e.getY());
+						eActionState = EActionState.e2PDrawing;
+					}
+				}
 			}
 		}
 
@@ -122,6 +171,9 @@ public class DrawingPanel extends JPanel {
 			if (eActionState == EActionState.e2PDrawing) {
 				finishDrawing(e.getX(), e.getY());
 				eActionState = EActionState.eReady;
+			} else if (eActionState == EActionState.eMoving) {
+				finishMoving(e.getX(), e.getY());
+				eActionState = EActionState.eReady;
 			}
 		}
 
@@ -129,15 +181,18 @@ public class DrawingPanel extends JPanel {
 		public void mouseDragged(MouseEvent e) {
 			if (eActionState == EActionState.e2PDrawing) {
 				keepDrawing(e.getX(), e.getY());
+			} else if (eActionState == EActionState.eMoving) {
+				keepMoving(e.getX(), e.getY());
 			}
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
 		}
-
 		@Override
 		public void mouseExited(MouseEvent e) {
 		}
 	}
+
+	
 }

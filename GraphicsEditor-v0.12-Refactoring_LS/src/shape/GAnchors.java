@@ -7,13 +7,13 @@ import java.awt.geom.Ellipse2D;
 import java.util.Vector;
 
 public class GAnchors {
-	private final int w = 20;
-	private final int h = 20;
+	private final int w = 10;
+	private final int h = 10;
 	private final int dw = w/2;
 	private final int dh = h/2;
 	
 	public enum EAnchors{
-		NW, NN, NE, EE, SE, SS, SW, WW, RR
+		NW, NN, NE, EE, SE, SS, SW, WW, RR //9개의 상태 + 앵커위에 없는 null
 	}
 	private Vector<Ellipse2D> anchors;
 	

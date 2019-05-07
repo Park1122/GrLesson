@@ -25,21 +25,18 @@ public class GPolygon extends GShape {
 		int dw = x - this.px;
 		int dh = y - this.py;
 		
-		for(int i=0; i<this.polygon.npoints; i++) {
-			this.polygon.xpoints[i] += dw;
-			this.polygon.ypoints[i] += dh;
-		}
-		
+		this.polygon.translate(dw, dh);
+	
 		this.px = x;
 		this.py = y;
 	}
 	public void finishMoving(int x, int y) {
-		java.awt.Polygon newPolygon = new java.awt.Polygon();
-		for(int i=0; i<this.polygon.npoints; i++) {
-			newPolygon.addPoint(this.polygon.xpoints[i],this.polygon.ypoints[i]);
-		}
-		
-		this.polygon = newPolygon;
-		this.shape = this.polygon; 
+//		java.awt.Polygon newPolygon = new java.awt.Polygon();
+//		for(int i=0; i<this.polygon.npoints; i++) {
+//			newPolygon.addPoint(this.polygon.xpoints[i],this.polygon.ypoints[i]);
+//		}
+//		
+//		this.polygon = newPolygon;
+//		this.shape = this.polygon; 
 	}
 }

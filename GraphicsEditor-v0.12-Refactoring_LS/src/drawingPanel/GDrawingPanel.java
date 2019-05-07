@@ -19,7 +19,7 @@ public class GDrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private enum EActionState {eReady, e2PDrawing, eNPDrawing, eMoving, eResizing, eRotating};
+	private enum EActionState {eReady, eDrawing, eMoving, eResizing, eRotating};
 	private EActionState eActionState;
 	private MouseHandler mouseHandler;
 
@@ -73,14 +73,27 @@ public class GDrawingPanel extends JPanel {
 		return null;
 	}
 	
-	private EActionState deActionState(int x, int y) {
+	private void defineActionState(int x, int y) { // 도형 별 action정의는 안함. general한 ui action판단.
 		EOnState eOnState = onShape(x, y);
-		//아무 셰잎에도 없다 null
-		//currentshape에 있는데
-		//온셰잎이면 무브
-		//리사이즈면 리사이즈
-		//로테이트면 로테이트
-		//null이면 드로잉 - npd인지 2pd인지 구분
+		if(eOnState == null) {
+				this.eActionState =  EActionState.eDrawing;
+		}else {
+			switch(eOnState) {
+			case eOnShape:
+				this.eActionState = EActionState.eMoving;
+				break;
+			case eOnResize:
+				this.eActionState = EActionState.eResizing;
+				break;
+			case eOnRotate:
+				this.eActionState = EActionState.eRotating;
+				break;
+			default:
+				//exception
+				this.eActionState = null;
+				break;
+			}
+		}
 	}
 	
 	private void initDrawing(int x, int y) {
@@ -104,7 +117,10 @@ public class GDrawingPanel extends JPanel {
 	}
 	
 	private void initMoving(int x, int y) {
-		this.currentShape.initMoving(x, y);
+//		this.currentShape.setSelected(true);
+		Graphics2D graphics2d = (Graphics2D) this.getGraphics();
+		graphics2d.setXORMode(getBackground());
+		this.currentShape.initMoving(graphics2d, x, y);
 	}
 
 	private void keepMoving(int x, int y) {
@@ -117,6 +133,36 @@ public class GDrawingPanel extends JPanel {
 		this.currentShape.finishMoving(x, y);
 	}
 
+	public void keepResizing(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void initRotating(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void initResizing(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void finishRotating(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void finishResizing(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keepRotating(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private class MouseHandler implements MouseListener, MouseMotionListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -126,63 +172,85 @@ public class GDrawingPanel extends JPanel {
 				mouse2Clicked(e);
 			}
 		}
-
 		public void mouse2Clicked(MouseEvent e) {
-			if (eActionState == EActionState.eNPDrawing) {
-				finishDrawing(e.getX(), e.getY());
-				eActionState = EActionState.eReady;
+			if (eActionState == EActionState.eDrawing) {
+				if(currentTool instanceof GPolygon) {
+					finishDrawing(e.getX(), e.getY());
+					eActionState = EActionState.eReady;
+				}
 			}
 		}
-
 		public void mouse1Clicked(MouseEvent e) {
 			if (eActionState == EActionState.eReady) {
-				initDrawing(e.getX(), e.getY());
-				eActionState = EActionState.eNPDrawing;
-			} else if (eActionState == EActionState.eNPDrawing) {
-				continueDrawing(e.getX(), e.getY());
+				if (currentTool instanceof GPolygon) {
+					initDrawing(e.getX(), e.getY());
+					eActionState = EActionState.eDrawing;
+				}
+			} else if (eActionState == EActionState.eDrawing) {
+				if (currentTool instanceof GPolygon) {
+					continueDrawing(e.getX(), e.getY());
+				}
 			}
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (eActionState == EActionState.eNPDrawing) {
-				keepDrawing(e.getX(), e.getY());
+			if (eActionState == EActionState.eDrawing) {
+				if(currentTool instanceof GPolygon) {					
+					keepDrawing(e.getX(), e.getY());
+				}
 			}
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if (eActionState == EActionState.eReady) {
-				eActionState = defineActionState();
-				if (onShape(e.getX(), e.getY())) {
-					initMoving(e.getX(), e.getY());
-					eActionState = EActionState.eMoving;
-				} else {
+				defineActionState(e.getX(), e.getY());
+				if (eActionState == EActionState.eDrawing) {
 					if(!(currentTool instanceof GPolygon)) {
 						initDrawing(e.getX(), e.getY());
-						eActionState = EActionState.e2PDrawing;
+					} else {
+						eActionState = EActionState.eReady;
 					}
-				}
+				} else if(eActionState == EActionState.eMoving) {
+					initMoving(e.getX(), e.getY());
+				} else if(eActionState == EActionState.eResizing) {
+					initResizing(e.getX(), e.getY());
+				} else if(eActionState == EActionState.eRotating) {
+					initRotating(e.getX(), e.getY());
+				}	
 			}
 		}
-
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (eActionState == EActionState.e2PDrawing) {
-				finishDrawing(e.getX(), e.getY());
-				eActionState = EActionState.eReady;
+			if (eActionState == EActionState.eDrawing) {
+				if(!(currentTool instanceof GPolygon)) {
+					finishDrawing(e.getX(), e.getY());
+					eActionState = EActionState.eReady;
+				}
 			} else if (eActionState == EActionState.eMoving) {
 				finishMoving(e.getX(), e.getY());
 				eActionState = EActionState.eReady;
+			} else if (eActionState == EActionState.eResizing) {
+				finishResizing(e.getX(), e.getY());
+				eActionState = EActionState.eReady;
+			} else if (eActionState == EActionState.eRotating) {
+				finishRotating(e.getX(), e.getY());
+				eActionState = EActionState.eReady;
 			}
 		}
-
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (eActionState == EActionState.e2PDrawing) {
-				keepDrawing(e.getX(), e.getY());
+			if (eActionState == EActionState.eDrawing) {
+				if(!(currentTool instanceof GPolygon)) {
+					keepDrawing(e.getX(), e.getY());				
+				}
 			} else if (eActionState == EActionState.eMoving) {
 				keepMoving(e.getX(), e.getY());
+			} else if (eActionState == EActionState.eResizing) {
+				keepResizing(e.getX(), e.getY());
+			} else if (eActionState == EActionState.eRotating) {
+				keepRotating(e.getX(), e.getY());
 			}
 		}
 
@@ -193,6 +261,8 @@ public class GDrawingPanel extends JPanel {
 		public void mouseExited(MouseEvent e) {
 		}
 	}
+
+	
 
 	
 }

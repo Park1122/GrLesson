@@ -1,6 +1,5 @@
 package shape;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import shape.GAnchors.EAnchors;
@@ -19,7 +18,7 @@ public abstract class GShape implements Cloneable{
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 		if(this.selected) {
-			this.anchors.setBoundingRect(this.shape.getBounds());	
+			this.anchors.setBoundingRect(this.shape.getBounds());
 		}
 	}
 	
@@ -32,10 +31,14 @@ public abstract class GShape implements Cloneable{
 	abstract public void setPoint(int x, int y);
 	abstract public void addPoint(int x, int y);
 	
-	public void initMoving(int x, int y) {
+	public void initMoving(Graphics2D graphics2d, int x, int y) {
 		this.px = x;
 		this.py = y;
-		
+		if(!this.selected) {
+			this.selected = true;
+			this.anchors.setBoundingRect(this.shape.getBounds());
+			this.anchors.draw(graphics2d);
+		}
 	}
 	abstract public void keepMoving(int x, int y);
 	abstract public void finishMoving(int x, int y);
@@ -50,20 +53,25 @@ public abstract class GShape implements Cloneable{
 		}
 		return null;
 	}
-	public void draw(Graphics graphics) {
-		Graphics2D graphics2d = (Graphics2D)graphics;
+	
+	public void draw(Graphics2D graphics2d) {
 		graphics2d.draw(this.shape);
+		if(this.selected) {
+			this.anchors.setBoundingRect(this.shape.getBounds());
+			this.anchors.draw(graphics2d);
+		}
 	}
+	
 	public EOnState onShape(int x, int y) {
 		if(this.selected) {
 			EAnchors eAnchor = this.anchors.onShape(x, y);
-			if(eAnchor == EAnchors.RR) { //rotate
+			if(eAnchor == EAnchors.RR) {
 				return EOnState.eOnRotate;
 			} else if(eAnchor == null) {
 				if(this.shape.contains(x,y)) {
 					return EOnState.eOnShape;
 				}
-			} else { //resize
+			} else {
 				return EOnState.eOnResize;
 			}
 		} else {

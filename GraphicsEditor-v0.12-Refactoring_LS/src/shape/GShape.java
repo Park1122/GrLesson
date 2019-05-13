@@ -40,10 +40,10 @@ public abstract class GShape implements Cloneable{
 			this.anchors.draw(graphics2d);
 		}
 	}
-	abstract public void keepMoving(int x, int y);
-	abstract public void finishMoving(int x, int y);
+	abstract public void keepMoving(Graphics2D graphics2d, int x, int y);
+	abstract public void finishMoving(Graphics2D graphics2d ,int x, int y);
 	
-	public GShape clone() { // 자기와 똑같이 생긴 메모리를 그대로 복제하는 능력
+	public GShape clone() {
 		try {
 			return (GShape)this.getClass().newInstance();
 		} catch (InstantiationException e) {

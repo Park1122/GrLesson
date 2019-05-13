@@ -36,6 +36,7 @@ public class GAnchors {
 		for(Shape shape: anchors) {
 			graphics2D.draw(shape);
 		}
+
 	}
 	public void setBoundingRect(Rectangle r) {
 		for(EAnchors eAnchor: EAnchors.values()) {

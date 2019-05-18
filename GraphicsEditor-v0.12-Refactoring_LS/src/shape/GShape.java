@@ -1,16 +1,19 @@
 package shape;
 
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.io.Serializable;
 
 import shape.GAnchors.EAnchors;
 
-public abstract class GShape implements Cloneable{
-	
+public abstract class GShape implements Cloneable, Serializable{
+	private static final long serialVersionUID = 1L;
+
 	public enum EOnState {eOnShape, eOnResize, eOnRotate};
 	
-	protected java.awt.Shape shape;
 	protected int px;
 	protected int py;
+	protected Shape shape;
 	private GAnchors anchors;
 	
 	private boolean selected;

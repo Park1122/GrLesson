@@ -4,9 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.Serializable;
 import java.util.Vector;
 
-public class GAnchors {
+public class GAnchors implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private final int w = 10;
 	private final int h = 10;
 	private final int dw = w/2;

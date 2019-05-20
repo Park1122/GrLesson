@@ -22,23 +22,34 @@ import transformer.GTransformer;
 
 public class GDrawingPanel extends JPanel {
 
+	// attributes
 	private static final long serialVersionUID = 1L;
-
-	private enum EActionState {eReady, eTransforming};
-	private EActionState eActionState;
-	private MouseHandler mouseHandler;
-
-	private Vector<GShape> shapeVector;
 	
-	public Vector<GShape> getShapeVector() { return shapeVector; }
-	public void setShapeVector(Object shapeVector) {
-		this.shapeVector = (Vector<GShape>)shapeVector;
+	// components
+	private MouseHandler mouseHandler;
+	private Vector<GShape> shapeVector;
+	public Vector<GShape> getShapeVector() {
+		return shapeVector;
+	}
+	public void restoreShapeVector(Object shapeVector) {
+		if(shapeVector == null) {
+			this.shapeVector.clear();
+		} else {
+			this.shapeVector = (Vector<GShape>)shapeVector;
+		}
 		this.repaint();
 	}
 
+	// working variables
+	private enum EActionState {eReady, eTransforming};
+	private EActionState eActionState;
+	
+	private boolean updated;
+	public boolean isUpdated() { return this.updated; }
+	public void setUpdated(boolean updated) { this.updated = updated; }
+	
 	private GShape currentShape;
 	private GTransformer transformer;
-	
 	private GShape currentTool;
 	public void setCurrentTool(EToolBar currentTool) {
 		this.currentTool = currentTool.getShape();
@@ -46,6 +57,7 @@ public class GDrawingPanel extends JPanel {
 	
 	public GDrawingPanel() {
 		this.eActionState = EActionState.eReady;
+		this.updated = false;
 
 		this.setForeground(Color.BLACK);
 		this.setBackground(Color.WHITE);
@@ -69,7 +81,7 @@ public class GDrawingPanel extends JPanel {
 		}
 	}
 
-	private EOnState onShape(int x, int y) { //밑에 누가 있냐 없냐를 판단, 리사이즈인지 무빙인지도 판단
+	private EOnState onShape(int x, int y) {
 		this.currentShape = null;
 		for(GShape shape: this.shapeVector) {
 			EOnState eOnState = shape.onShape(x, y);
@@ -124,6 +136,7 @@ public class GDrawingPanel extends JPanel {
 		if(this.transformer instanceof GDrawer) {
 			this.shapeVector.add(this.currentShape);
 		}
+		this.updated = true;
 	}
 	
 	private class MouseHandler implements MouseListener, MouseMotionListener {

@@ -57,11 +57,34 @@ public class Constants {
 		openItem("열기", "open"),
 		saveItem("저장", "save"),
 		saveAsItem("다른이름으로", "saveAs"),
+		printItem("인쇄하기","print"),
 		closeItem("닫기", "close"),
 		;
 		private String text;
 		private String method;
 		private EFileMenu(String text, String method) {
+			this.text = text;
+			this.method = method;
+		}
+		public String getText() {
+			return this.text;
+		}
+		public String getMethod() {
+			return this.method;
+		}
+	}
+	public enum EEditMenu {
+		undo("되돌리기", "undo"),
+		redo("다시실행", "redo"),
+		cut("잘라내기", "cut"),
+		copy("복사하기", "copy"),
+		paste("붙여넣기","paste"),
+		group("모으기", "group"),
+		ungroup("나누기", "ungroup"),
+		;
+		private String text;
+		private String method;
+		private EEditMenu(String text, String method) {
 			this.text = text;
 			this.method = method;
 		}

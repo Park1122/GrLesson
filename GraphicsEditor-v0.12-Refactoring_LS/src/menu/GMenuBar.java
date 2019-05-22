@@ -10,6 +10,7 @@ public class GMenuBar extends JMenuBar {
 	
 	//components
 	private GFileMenu fileMenu;
+	private GEditMenu editMenu;
 	
 	//associations
 	private GDrawingPanel drawingPanel;
@@ -24,14 +25,19 @@ public class GMenuBar extends JMenuBar {
 		this.fileMenu = new GFileMenu(EMenu.fileMenu.getText());
 		this.add(this.fileMenu);
 		
+		this.editMenu = new GEditMenu(EMenu.editMenu.getText());
+		this.add(this.editMenu);
+		
 	}
 
 	public void initialize() {
 		// associate
 		this.fileMenu.associate(this.drawingPanel);
+		this.editMenu.associate(this.drawingPanel);
 		
 		// initialize components
 		this.fileMenu.initialize();
+		this.editMenu.initialize();
 		
 	}
 }

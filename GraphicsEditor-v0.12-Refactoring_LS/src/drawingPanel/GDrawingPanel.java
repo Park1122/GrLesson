@@ -31,6 +31,7 @@ public class GDrawingPanel extends JPanel {
 	public Vector<GShape> getShapeVector() {
 		return shapeVector;
 	}
+	@SuppressWarnings("unchecked")
 	public void restoreShapeVector(Object shapeVector) {
 		if(shapeVector == null) {
 			this.shapeVector.clear();
@@ -118,7 +119,7 @@ public class GDrawingPanel extends JPanel {
 	}
 	
 	private void initTransforming(int x, int y) {
-		if(this.transformer instanceof GDrawer) {			
+		if(this.transformer instanceof GDrawer) {
 			this.currentShape = this.currentTool.clone();
 		}
 		this.transformer.setgShape(this.currentShape);

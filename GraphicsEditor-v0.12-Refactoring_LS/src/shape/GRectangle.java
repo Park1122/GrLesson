@@ -17,8 +17,8 @@ public class GRectangle extends GShape {
 		return new GRectangle();
 	}
 	
-	public GShape clone() {
-	}
+//	public GShape clone() {
+//	}
 	
 	public void setOrigin(int x, int y) {
 		this.rectangle.setBounds(x, y, 0, 0);

@@ -27,6 +27,8 @@ public class GDrawingPanel extends JPanel {
 	
 	// components
 	private MouseHandler mouseHandler;
+	private Clipboard clipboard;
+	
 	private Vector<GShape> shapeVector;
 	public Vector<GShape> getShapeVector() {
 		return shapeVector;
@@ -67,6 +69,8 @@ public class GDrawingPanel extends JPanel {
 		this.addMouseListener(this.mouseHandler);
 		this.addMouseMotionListener(this.mouseHandler);
 
+		this.clipboard = new Clipboard();
+		
 		this.shapeVector = new Vector<GShape>();
 		this.transformer = null;
 	}
@@ -120,7 +124,7 @@ public class GDrawingPanel extends JPanel {
 	
 	private void initTransforming(int x, int y) {
 		if(this.transformer instanceof GDrawer) {
-			this.currentShape = this.currentTool.clone();
+			this.currentShape = this.currentTool.newInstance();
 		}
 		this.transformer.setgShape(this.currentShape);
 		this.transformer.initTransforming((Graphics2D)this.getGraphics(), x, y);
@@ -138,6 +142,28 @@ public class GDrawingPanel extends JPanel {
 			this.shapeVector.add(this.currentShape);
 		}
 		this.updated = true;
+	}
+	
+	public void cut() {
+		Vector<GShape> selectedShapes = new Vector<GShape>();
+		for(int i=this.shapeVector.size()-1; i>=0; i--) {
+			if(this.shapeVector.get(i).isSelected()) {
+				selectedShapes.add(this.shapeVector.get(i));
+				this.shapeVector.remove(i);
+			}
+		}
+		this.clipboard.setContents(selectedShapes);
+		this.repaint();
+	}
+
+	public void copy() {
+
+	}
+
+	public void paste() {
+		Vector<GShape> shapes = this.clipboard.getContents();
+		this.shapeVector.addAll(shapes);
+		repaint();
 	}
 	
 	private class MouseHandler implements MouseListener, MouseMotionListener {

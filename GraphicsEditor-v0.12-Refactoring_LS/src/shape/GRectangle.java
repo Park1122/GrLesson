@@ -3,12 +3,21 @@ package shape;
 import java.awt.Graphics2D;
 
 public class GRectangle extends GShape {
+	private static final long serialVersionUID = 1L;
+	
 	private java.awt.Rectangle rectangle;
 	
 	public GRectangle() {
 		super();
 		this.shape = new java.awt.Rectangle();
 		this.rectangle = (java.awt.Rectangle)this.shape;
+	}
+	
+	public GShape newInstance() {
+		return new GRectangle();
+	}
+	
+	public GShape clone() {
 	}
 	
 	public void setOrigin(int x, int y) {

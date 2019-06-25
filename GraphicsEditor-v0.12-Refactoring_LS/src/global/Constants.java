@@ -3,6 +3,7 @@ package global;
 import shape.GShape;
 import shape.GRectangle;
 import shape.GPolygon;
+import shape.GGroup;
 
 public class Constants {
 	
@@ -22,8 +23,8 @@ public class Constants {
 		}
 	}
 	public enum EToolBar {
+		select("선택", new GGroup()),
 		rectangle("네모", new GRectangle()),
-		rectangle2("네모", new GRectangle()),
 		polygon("폴리곤", new GPolygon()),
 		;
 		private String text;

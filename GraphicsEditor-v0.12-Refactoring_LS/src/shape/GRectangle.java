@@ -11,14 +11,14 @@ public class GRectangle extends GShape {
 		super();
 		this.shape = new java.awt.Rectangle();
 		this.rectangle = (java.awt.Rectangle)this.shape;
+		
+//		super(new Rectangle2D.Double());
+//		this.rectangle = (Rectangle2D) this.shape;
 	}
 	
 	public GShape newInstance() {
 		return new GRectangle();
 	}
-	
-//	public GShape clone() {
-//	}
 	
 	public void setOrigin(int x, int y) {
 		this.rectangle.setBounds(x, y, 0, 0);

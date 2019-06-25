@@ -20,6 +20,7 @@ public abstract class GShape implements Cloneable, Serializable{
 	
 	//components
 	protected Shape shape;
+	public Shape getShape() { return this.shape; }
 	private GAnchors anchors;
 	
 	private boolean selected;
@@ -43,8 +44,7 @@ public abstract class GShape implements Cloneable, Serializable{
 	public void initMoving(Graphics2D graphics2d, int x, int y) {
 		this.px = x;
 		this.py = y;
-		if(!this.selected) {
-			this.selected = true;
+		if(this.selected) {
 			this.anchors.setBoundingRect(this.shape.getBounds());
 			this.anchors.draw(graphics2d);
 		}

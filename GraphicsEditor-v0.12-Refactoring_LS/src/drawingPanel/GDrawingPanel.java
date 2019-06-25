@@ -11,6 +11,7 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import global.Constants.EToolBar;
+import shape.GGroup;
 import shape.GPolygon;
 import shape.GShape;
 import shape.GShape.EOnState;
@@ -86,6 +87,12 @@ public class GDrawingPanel extends JPanel {
 		}
 	}
 
+	private void clearSelected() {
+		for(GShape shape: this.shapeVector) {
+			shape.setSelected(false);
+		}
+	}
+	
 	private EOnState onShape(int x, int y) {
 		this.currentShape = null;
 		for(GShape shape: this.shapeVector) {
@@ -99,11 +106,15 @@ public class GDrawingPanel extends JPanel {
 	}
 	
 	private void defineActionState(int x, int y) {
-		
 		EOnState eOnState = onShape(x, y);
 		if(eOnState == null) {
+			this.clearSelected();
 			this.transformer = new GDrawer();
 		} else {
+			if(!this.currentShape.isSelected()) {
+				this.clearSelected();
+				this.currentShape.setSelected(true);
+			}
 			switch(eOnState) {
 			case eOnShape:
 				this.transformer = new GMover();
@@ -139,8 +150,13 @@ public class GDrawingPanel extends JPanel {
 	private void finishTransforming(int x, int y) {
 		this.transformer.finishTransforming((Graphics2D)this.getGraphics(), x, y);
 		if(this.transformer instanceof GDrawer) {
-			this.shapeVector.add(this.currentShape);
+			if(this.currentShape instanceof GGroup) {
+				((GGroup)(this.currentShape)).contains(this.shapeVector);
+			} else {
+				this.shapeVector.add(this.currentShape);
+			}
 		}
+		this.repaint();
 		this.updated = true;
 	}
 	
